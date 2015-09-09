@@ -23,6 +23,20 @@ namespace projekt_Auktionshuset
         public MainWindow()
         {
             InitializeComponent();
+
+            List<string> stringSourceList = new List<string>();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                stringSourceList.Add("test "+i);
+            }
+
+            ListBoxAuctionLog.ItemsSource = stringSourceList;
+
+            /* Vælger sidste element, og scroller ned til det.*/
+            ListBoxAuctionLog.ScrollIntoView(ListBoxAuctionLog.Items[ListBoxAuctionLog.Items.Count-1]);
+
+
         }
     }
 }
