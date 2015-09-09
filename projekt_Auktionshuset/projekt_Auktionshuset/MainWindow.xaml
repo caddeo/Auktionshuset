@@ -14,6 +14,5 @@
         <Button x:Name="ButtonSend" Content="Send" HorizontalAlignment="Center" Margin="490,387,75,0" VerticalAlignment="Top" Width="83" RenderTransformOrigin="0.41,0.15" Height="23"/>
         <Button x:Name="ButonExit" Content="Afslut" HorizontalAlignment="Right" Margin="0,435,32,0" VerticalAlignment="Top" Width="75"/>
         <ListBox x:Name="ListBoxAuctionLog" HorizontalAlignment="Center" Height="319" Margin="330,63,75,0" VerticalAlignment="Top" Width="243"/>
-        <Image x:Name="FriisErGrim2" HorizontalAlignment="Left" Height="161" Margin="60,249,0,0" VerticalAlignment="Top" Width="227" Source="http://photos4.meetupstatic.com/photos/member/4/d/e/6/member_181819942.jpeg"/>
     </Grid>
 </Window>
