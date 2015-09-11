@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Program
+    class Controller
     {
-        static void Main(string[] args)
-        {
-            Server server = new Server(12000, "127.0.0.1");
-        }
+
     }
 }
