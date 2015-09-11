@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace projekt_Auktionshuset
 {
@@ -20,23 +22,38 @@ namespace projekt_Auktionshuset
     /// </summary>
     public partial class MainWindow : Window
     {
+        ServerHandler serverHandler;
         public MainWindow()
         {
             InitializeComponent();
-
-            List<string> stringSourceList = new List<string>();
-
-            for (int i = 0; i < 1000; i++)
+            serverHandler = new ServerHandler("127.0.0.1", 12000);
+            serverHandler.Open();
+            serverHandler.RecieveNewBidderEvent += OnRecieveNewBidderEvent;
+            serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;
+        }
+        private void OnRecieveNewBidderEvent(string bidder)
+        {
+            if (!this.Dispatcher.CheckAccess())
             {
-                stringSourceList.Add("test "+i);
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bidder);
+                return;
             }
-
-            ListBoxAuctionLog.ItemsSource = stringSourceList;
-
-            /* Vælger sidste element, og scroller ned til det.*/
-            ListBoxAuctionLog.ScrollIntoView(ListBoxAuctionLog.Items[ListBoxAuctionLog.Items.Count-1]);
-
+            Console.WriteLine("GUI:" + bidder);
+            ListBoxAuctionLog.Items.Add(bidder);
 
         }
+        private void OnRecieveNewBidEvent(string bid)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
+                return;
+            }
+            string hej = hej;
+            DataGridAuctionInfo.Columns[0].Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
+            Console.WriteLine("GUI:" + bid);
+            textBlockRecieve.Text += bid;
+        }
+
     }
 }
