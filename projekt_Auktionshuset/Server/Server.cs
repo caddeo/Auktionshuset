@@ -36,6 +36,7 @@ namespace Server
                 ClientHandler handler = new ClientHandler(clientSocket, _broadcaster);
 
                 Thread clientThread = new Thread(handler.RunClient);
+                clientThread.Start();
             }
 
             

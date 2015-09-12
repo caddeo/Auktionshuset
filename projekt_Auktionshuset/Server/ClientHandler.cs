@@ -26,19 +26,31 @@ namespace Server
 
         public void RunClient()
         {
-            using (this._netStream = new NetworkStream(_clientSocket))
-            using (this._writer = new StreamWriter(_netStream))
-            using(this._reader = new StreamReader(_netStream))
+            try
             {
-                Run();
+                using (this._netStream = new NetworkStream(_clientSocket))
+                using (this._writer = new StreamWriter(_netStream))
+                using (this._reader = new StreamReader(_netStream))
+                {
+                    Run();
+                }
             }
+            catch
+            {
+                // ignored
+                // TODO: 
+                // client disconnect handling here
+            }
+
             this._clientSocket.Shutdown(SocketShutdown.Both);
             this._clientSocket.Close();
+
         }
 
         private void Send(string message)
         {
             _writer.WriteLine(message);
+            _writer.Flush();
         }
         
         /* Spørger om input fra clienten */
@@ -60,48 +72,37 @@ namespace Server
         {
             try
             {
-                bool running = true;
+                Broadcast("Server Klar til input");
 
-                while (running)
-                {
-                    Send("TEST Server klar");
+                /* Subscribe broadcaster */
+                _broadcaster.BroadcastMessage += this.Broadcast; 
 
-                    /* Imens den kører - broadcast besked */
-                    _broadcaster.BroadcastMessage += this.Broadcast;
-
-                    string input = Recieve();
-
-                    if (!HandleInput(input))
-                    {
-                        running = false;
-                    }
-                }
+                /* Find på en bedre løsning */
+                while (HandleInput()) ; 
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                /* Send en besked med exceptionen */
                 Send(e.Message);
             }
-            
-            /* Hvis den stopper - så unsubscribe */
-            _broadcaster.BroadcastMessage -= this.Broadcast;
-
+            finally
+            {
+                /* Subscribe broadcaster */
+                _broadcaster.BroadcastMessage -= this.Broadcast;
+            }
         }
 
-        private bool HandleInput(string rawinput)
+        private bool HandleInput() 
         {
-            string input = rawinput.Trim().ToLower();
-            
-            /* f.eks. så kan der laves 
-                if(input == null)
-                {
-                return false
-                }
+            // Behandling af input fra klient
+            string input = Recieve();
 
-                for at undgå noget bestemt input
-            */
-            
+            if (input == null)
+            {
+                return false;
+            }
+
             _broadcaster.Broadcast(input);
+
             return true;
         }
 
