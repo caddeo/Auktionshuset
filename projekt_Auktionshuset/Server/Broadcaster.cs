@@ -12,7 +12,9 @@ namespace Server
 
         public event BroadcastEvent BroadcastMessage;
 
-
+        // TODO:
+        // listen skal i controller også
+        // tilmeld og afmeld skal fra clienthanler til controller
         private List<ClientHandler> _clients;
 
         public Broadcaster()
@@ -24,14 +26,12 @@ namespace Server
         public void Subscribe(ClientHandler client)
         {
             _clients.Add(client);
-            Console.WriteLine("DEBUG. Subscribe()");
         }
 
         /* Unsubscribe fra listen */
         public void Unsubscribe(ClientHandler client)
         {
             _clients.Remove(client);
-            Console.WriteLine("DEBUG. Unsubscribe()");
         }
 
         /* Broadcast til clienter på listen */
@@ -41,6 +41,12 @@ namespace Server
             {
                 BroadcastMessage(message);
             }
+        }
+
+        /* TIL TEST */
+        public string BroadcastClientCount()
+        {
+            return ""+_clients.Count;
         }
     }
 }
