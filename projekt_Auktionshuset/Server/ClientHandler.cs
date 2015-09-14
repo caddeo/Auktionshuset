@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +27,12 @@ namespace Server
         {
             this._clientSocket = clientSocket;
             this._broadcaster = broadcaster;
+
+            /* Udskriver IP'en */
+            string IP = clientSocket.RemoteEndPoint.ToString();
+            IPAddress ip = IPAddress.Parse(IP.Substring(0, IP.Length - 5));
+
+            Console.WriteLine(IP+" connected");
         }
 
         public void RunClient()
@@ -40,16 +48,11 @@ namespace Server
             }
             catch (Exception e)
             {
-                // ignored
-                // TODO: 
-                // client disconnect handling here
-
                 // Skriv en fejlmelding til serveren
                 Console.WriteLine("RunClient() " + e.Message);
             }
 
-            //Console.WriteLine("DEBUG. Client disconnect");    
-
+            /* Disconnect */
             this._netStream.Close();
             this._writer.Close();
             this._reader.Close();
@@ -71,11 +74,13 @@ namespace Server
             {
                 return _reader.ReadLine();
             }
+            /* Kan bruges til at undgå bruger input fejl */
+            /* if(e is Exception...) */
             catch(Exception e)
             {
                 /* De forskellige exceptions kan catches*/
                 /* retunere fejl beskeden */
-                return "Recieve()"+ e.Message;
+                return "Recieve() "+ e.Message;
             }
         }
 
@@ -99,10 +104,10 @@ namespace Server
             }
             catch (Exception e)
             {
-                /*if (e is NullReferenceException)
-                {
-                    // ignore
-                }*/
+                //if (e is NullReferenceException)
+                //{
+                //    // ignore
+                //}
 
                 Console.WriteLine("Run() " + e.Message);
             }
@@ -119,22 +124,24 @@ namespace Server
             // Behandling af input fra klient
             string input = Recieve();
 
-            /* Tjekker om input er null (den er typisk null når man tryker kryds) */
+            // Tjekker om input er null (den er typisk null når man tryker kryds)
             if (input != null)
             {
-                /* Brug Trim() for at sikre at det er "RAW" input*/
-                /* Indtil der bliver inputtet "slut" så kør */
+                // Brug Trim() for at sikre at det er "RAW" input
+                // Indtil der bliver inputtet "slut" så kør
                 if (input.Trim().ToLower() == "quit")
                 {
                     _running = false;
                 }
 
-                _broadcaster.Broadcast("CLIENT: " + input);
+                if (input.Trim().ToLower() == "count")
+                {
+                    _broadcaster.Broadcast(_broadcaster.BroadcastClientCount());
+                }
 
-                // Bruges til debugging: 
-                //Console.WriteLine("DEBUG. CLIENT: " + input);
+                _broadcaster.Broadcast("CLIENT: " + input);
             }
-            /* */
+            // hvis den er null
             else
             {
                 _running = false;

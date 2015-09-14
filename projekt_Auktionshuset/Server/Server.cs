@@ -20,28 +20,27 @@ namespace Server
         {
             _broadcaster = new Broadcaster();
 
-            IPAddress IP = IPAddress.Parse(ip);
+            var IP = IPAddress.Parse(ip);
             TcpListener listener = new TcpListener(IP, port);
 
             running = true;
 
             listener.Start();
+            
+            System.Console.WriteLine("Server klar");
 
             while (running)
             {
-                System.Console.WriteLine("Server klar");
+                /* En socket forbinder*/
                 Socket clientSocket = listener.AcceptSocket();
 
-                System.Console.WriteLine("Connection");
+                /* Lav en ny client handler til forbindelsen */
                 ClientHandler handler = new ClientHandler(clientSocket, _broadcaster);
 
+                /* Start det i en ny tråd */
                 Thread clientThread = new Thread(handler.RunClient);
                 clientThread.Start();
             }
-
-            
         }
-
-
     }
 }
