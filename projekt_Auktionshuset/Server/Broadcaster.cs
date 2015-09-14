@@ -20,16 +20,18 @@ namespace Server
             this._clients = new List<ClientHandler>();
         }
 
-        /* Tilmeld fra listen */
-        public void Tilmeld(ClientHandler client)
+        /* Subscribe fra listen */
+        public void Subscribe(ClientHandler client)
         {
             _clients.Add(client);
+            Console.WriteLine("DEBUG. Subscribe()");
         }
 
-        /* Afmeld fra listen */
-        public void Afmeld(ClientHandler client)
+        /* Unsubscribe fra listen */
+        public void Unsubscribe(ClientHandler client)
         {
             _clients.Remove(client);
+            Console.WriteLine("DEBUG. Unsubscribe()");
         }
 
         /* Broadcast til clienter på listen */

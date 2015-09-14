@@ -18,6 +18,9 @@ namespace Server
 
         private Broadcaster _broadcaster;
 
+        // serverens runtime status
+        private bool _running; 
+
         public ClientHandler(Socket clientSocket, Broadcaster broadcaster)
         {
             this._clientSocket = clientSocket;
@@ -35,16 +38,24 @@ namespace Server
                     Run();
                 }
             }
-            catch
+            catch (Exception e)
             {
                 // ignored
                 // TODO: 
                 // client disconnect handling here
+
+                // Skriv en fejlmelding til serveren
+                Console.WriteLine("RunClient() " + e.Message);
             }
+
+            //Console.WriteLine("DEBUG. Client disconnect");    
+
+            this._netStream.Close();
+            this._writer.Close();
+            this._reader.Close();
 
             this._clientSocket.Shutdown(SocketShutdown.Both);
             this._clientSocket.Close();
-
         }
 
         private void Send(string message)
@@ -64,7 +75,7 @@ namespace Server
             {
                 /* De forskellige exceptions kan catches*/
                 /* retunere fejl beskeden */
-                return e.Message;
+                return "Recieve()"+ e.Message;
             }
         }
 
@@ -73,37 +84,61 @@ namespace Server
             try
             {
                 Broadcast("Server Klar til input");
+                _running = true;
 
                 /* Subscribe broadcaster */
-                _broadcaster.BroadcastMessage += this.Broadcast; 
+                _broadcaster.BroadcastMessage += this.Broadcast;
+                _broadcaster.Subscribe(this);
 
-                /* Find på en bedre løsning */
-                while (HandleInput()) ; 
+                /* Imens den er true så kør*/
+                while (_running)
+                {
+                    /* Imens den kører så handle user input*/
+                    HandleInput();
+                }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Send(e.Message);
+                /*if (e is NullReferenceException)
+                {
+                    // ignore
+                }*/
+
+                Console.WriteLine("Run() " + e.Message);
             }
             finally
             {
-                /* Subscribe broadcaster */
+                /* Unsubscribe broadcaster */
                 _broadcaster.BroadcastMessage -= this.Broadcast;
+                _broadcaster.Unsubscribe(this);
             }
         }
 
-        private bool HandleInput() 
+        private void HandleInput() 
         {
             // Behandling af input fra klient
             string input = Recieve();
 
-            if (input == null)
+            /* Tjekker om input er null (den er typisk null når man tryker kryds) */
+            if (input != null)
             {
-                return false;
+                /* Brug Trim() for at sikre at det er "RAW" input*/
+                /* Indtil der bliver inputtet "slut" så kør */
+                if (input.Trim().ToLower() == "quit")
+                {
+                    _running = false;
+                }
+
+                _broadcaster.Broadcast("CLIENT: " + input);
+
+                // Bruges til debugging: 
+                //Console.WriteLine("DEBUG. CLIENT: " + input);
             }
-
-            _broadcaster.Broadcast(input);
-
-            return true;
+            /* */
+            else
+            {
+                _running = false;
+            }
         }
 
         public void Broadcast(string message)
