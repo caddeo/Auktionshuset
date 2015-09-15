@@ -13,7 +13,8 @@ namespace projekt_Auktionshuset
         public event RecieveEventType RecieveNewBidderEvent;
         public event RecieveEventType RecieveDescriptionEvent;
         public event RecieveEventType RecieveNewHighestEvent;
-        private string servername;
+        public event RecieveEventType RecieveEstimatedEvent;
+        private string _servername;
         private int port;
 
         private TcpClient serverSocket;
@@ -24,12 +25,12 @@ namespace projekt_Auktionshuset
 
         public ServerHandler(string servername, int port)
         {
-            this.servername = servername;
+            this._servername = servername;
             this.port = port;
         }
         public void Open()
         {
-            serverSocket = new TcpClient(servername, port);
+            serverSocket = new TcpClient("127.0.0.1", 12000);
             netStream = serverSocket.GetStream();
             writer = new StreamWriter(netStream);
             reader = new StreamReader(netStream);
@@ -44,20 +45,28 @@ namespace projekt_Auktionshuset
             serverSocket.Close();
             serverSocket = null;
         }
-        private void WriteToSocket(string bid)
+
+        public void WriteToSocket(string command, string bid)
         {
-            if (Regex.IsMatch(bid, @"[a-zA-Z]"))
-            {
-                writer.WriteLine("COMMAND");
-                writer.Flush();
-                writer.WriteLine(bid);
-                writer.Flush();
-            }
-            else
-            {
-                writer.Write(bid);
-                writer.Flush();
-            }
+            writer.WriteLine(command);
+            writer.Flush();
+            writer.WriteLine(bid);
+            writer.Flush();
+
+            // en alternativ måde
+
+            //if (Regex.IsMatch(bid, @"[a-zA-Z]"))
+            //{
+            //    writer.WriteLine("COMMAND");
+            //    writer.Flush();
+            //    writer.WriteLine(bid);
+            //    writer.Flush();
+            //}
+            //else
+            //{
+            //    writer.Write(bid);
+            //    writer.Flush();
+            //}
         }
         private string ReadLineFromSocket()
         {
@@ -79,24 +88,30 @@ namespace projekt_Auktionshuset
         {
             while (true)
             {
-                string cmdmsg = ReadLineFromSocket();
-                Console.WriteLine(cmdmsg);
-                switch (cmdmsg)
+                string command = ReadLineFromSocket();
+                Console.WriteLine(command);
+                switch (command)
                 {
                     case "NEWBIDDER":
                         string newBidder = ReadLineFromSocket();
-                        if (RecieveNewBidEvent != null)
-                            RecieveNewBidEvent(newBidder);
+                        if (RecieveNewBidderEvent != null)
+                            RecieveNewBidderEvent(newBidder);
                         break;
-                    //case "NEWHIGHEST":
-                    //    string msg = ReadLineFromSocket();
-
-                    //    if (RecieveNewHighestEvent != null)
-                    //        RecieveNewHighestEvent(msg);
+                    case "NEWHIGHEST":
+                        string bid = ReadLineFromSocket();
+                        if (RecieveNewHighestEvent != null)
+                            RecieveNewHighestEvent(bid);
                         break;
                     case "DESCRIPTION":
+                        string desc = ReadLineFromSocket();
                         if (RecieveDescriptionEvent != null)
-                            RecieveDescriptionEvent(cmdmsg);
+                            RecieveDescriptionEvent(desc);
+                        string estimatePrice = ReadLineFromSocket();
+                        if (RecieveEstimatedEvent != null)
+                            RecieveEstimatedEvent(estimatePrice);
+                        string currentPrice = ReadLineFromSocket();
+                        if (RecieveNewHighestEvent != null)
+                            RecieveNewHighestEvent(currentPrice);
                         break;
                 }
             }

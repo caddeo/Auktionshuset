@@ -9,19 +9,12 @@
     <Grid>
         <Label x:Name="LabelAuction" HorizontalContentAlignment="Left" Content="AktionsInfo" HorizontalAlignment="Center" Margin="10,10,318.8,0" VerticalAlignment="Top" Width="220" Height="48" FontSize="24"/>
         <Label x:Name="LabelAuctionName" HorizontalContentAlignment="Left" Content="Aktionsnavn" HorizontalAlignment="Center" Margin="330,10,75,0" VerticalAlignment="Top" Width="243" Height="48" FontSize="24"/>
-        <DataGrid x:Name="DataGridAuctionInfo" Background="White" HorizontalAlignment="Center" Margin="10,63,318.8,0" VerticalAlignment="Top" Height="181" Width="220" RenderTransformOrigin="0.482,0.497"/>
         <TextBox x:Name="TextboxUserInput" HorizontalAlignment="Center" VerticalContentAlignment="Center" Height="23" Margin="330,387,163,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
-        <Button x:Name="ButtonSend" Content="Send" HorizontalAlignment="Center" Margin="490,387,75,0" VerticalAlignment="Top" Width="83" RenderTransformOrigin="0.41,0.15" Height="23"/>
-        <Button x:Name="ButonExit" Content="Afslut" HorizontalAlignment="Right" Margin="0,435,32,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="ButtonSend" Content="Send" HorizontalAlignment="Center" Margin="490,387,75,0" VerticalAlignment="Top" Width="83" RenderTransformOrigin="0.41,0.15" Height="23" Click="ButtonSend_Click"/>
+        <Button x:Name="ButtonExit" Content="Afslut" HorizontalAlignment="Right" Margin="0,435,32,0" VerticalAlignment="Top" Width="75" Click="ButtonExit_Click"/>
         <ListBox x:Name="ListBoxAuctionLog" HorizontalAlignment="Center" Height="319" Margin="330,63,75,0" VerticalAlignment="Top" Width="243"/>
-        <ListView x:Name="listViewAuctionInfo" HorizontalAlignment="Left" Height="166" Margin="46,289,0,0" VerticalAlignment="Top" Width="240">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header = "Description"  Width="70"/>
-                    <GridViewColumn Header = "Estimated price"  Width="90"/>
-                    <GridViewColumn Header = "Current bid"  Width="70"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <TextBlock x:Name="TextBlockDescription" HorizontalAlignment="Left" Margin="66,63,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="138" Width="131"/>
+        <TextBlock x:Name="TextBlockEstimatedPrice" HorizontalAlignment="Left" Margin="66,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="67"/>
+        <TextBlock x:Name="TextBlockCurrentPrice" HorizontalAlignment="Left" Margin="66,250,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="67"/>
     </Grid>
 </Window>
