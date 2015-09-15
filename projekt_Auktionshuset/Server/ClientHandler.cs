@@ -29,10 +29,10 @@ namespace Server
             this._broadcaster = broadcaster;
 
             /* Udskriver IP'en */
-            string IP = clientSocket.RemoteEndPoint.ToString();
-            IPAddress ip = IPAddress.Parse(IP.Substring(0, IP.Length - 5));
+            string clientIp = clientSocket.RemoteEndPoint.ToString();
+            IPAddress ip = IPAddress.Parse(clientIp.Substring(0, clientIp.Length - 5));
 
-            Console.WriteLine(IP+" connected");
+            Console.WriteLine(clientIp +" connected");
         }
 
         public void RunClient()
