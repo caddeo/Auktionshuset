@@ -32,7 +32,7 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;
             serverHandler.RecieveDescriptionEvent += OnRecieveDescriptionEvent;
             serverHandler.RecieveEstimatedEvent += OnRecieveEstimatedEvent;
-            serverHandler.WriteToSocket("Connected", "");
+            serverHandler.WriteToSocket("CONNECTED", "");
         }
         private void OnRecieveNewBidderEvent(string bidder)
         {
