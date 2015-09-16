@@ -43,7 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aktion.cs" />
     <Compile Include="Broadcaster.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="ClientHandler.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Program.cs" />

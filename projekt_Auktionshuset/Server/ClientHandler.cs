@@ -20,6 +20,8 @@ namespace Server
 
         private Broadcaster _broadcaster;
 
+        private Client client;
+
         // serverens runtime status
         private bool _running; 
 
@@ -31,6 +33,9 @@ namespace Server
             /* Udskriver IP'en */
             string clientIp = clientSocket.RemoteEndPoint.ToString();
             IPAddress ip = IPAddress.Parse(clientIp.Substring(0, clientIp.Length - 5));
+
+
+            client = new Client(clientIp.Substring(0, clientIp.Length - 5));
 
             Console.WriteLine(clientIp +" connected");
         }
@@ -85,7 +90,7 @@ namespace Server
         }
 
         private void Run()
-        {//
+        {
             try
             {
                 Broadcast("Server Klar til input");
@@ -134,7 +139,7 @@ namespace Server
                     _running = false;
                 }
 
-                if (input.Trim().ToLower() == "count")
+                if (input.Trim().ToLower() == "usercount")
                 {
                     _broadcaster.Broadcast(_broadcaster.BroadcastClientCount());
                 }
