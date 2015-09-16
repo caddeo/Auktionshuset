@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace projekt_Auktionshuset
 {
@@ -32,6 +33,7 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;
             serverHandler.RecieveDescriptionEvent += OnRecieveDescriptionEvent;
             serverHandler.RecieveEstimatedEvent += OnRecieveEstimatedEvent;
+            serverHandler.RecieveMessageEvent += OnRecieveMessageEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
         }
         private void OnRecieveNewBidderEvent(string bidder)
@@ -41,8 +43,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bidder);
                 return;
             }
-            Console.WriteLine("Auktion:" + bidder);
-            ListBoxAuctionLog.Items.Add(bidder);
+            ListBoxAuctionLog.Items.Add("New bid: " + bidder);
 
         }
         private void OnRecieveNewBidEvent(string bid)
@@ -52,8 +53,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
                 return;
             }
-            TextBlockCurrentPrice.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
-            Console.WriteLine("GUI:" + bid);
+            TextBlockCurrentPrice.Text = "Current price: " + bid;
         }
 
         private void OnRecieveDescriptionEvent(string desc)
@@ -63,8 +63,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
                 return;
             }
-            TextBlockDescription.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
-            Console.WriteLine("GUI:" + desc);
+            TextBlockDescription.Text = "Description: \n" + desc;
         }
         private void OnRecieveEstimatedEvent(string price)
         {
@@ -73,8 +72,17 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveEstimatedEvent), price);
                 return;
             }
-            TextBlockDescription.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), price);
-            Console.WriteLine("GUI:" + price);
+            TextBlockEstimatedPrice.Text = "Estimated price: " + price;
+        }
+
+        private void OnRecieveMessageEvent(string text)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
+                return;
+            }
+            ListBoxAuctionLog.Items.Add("Auction message: " + text);
         }
 
         private void ButtonSend_Click(object sender, RoutedEventArgs e)
@@ -85,6 +93,7 @@ namespace projekt_Auktionshuset
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             serverHandler.WriteToSocket("DISCONNECT", "");
+            serverHandler.Close();
         }
 
         private void ButtonSend_KeyDown(object sender, KeyEventArgs e) {

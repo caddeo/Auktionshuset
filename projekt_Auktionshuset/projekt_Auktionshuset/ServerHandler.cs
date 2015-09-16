@@ -9,49 +9,50 @@ namespace projekt_Auktionshuset
 {
     class ServerHandler
     {
-        public delegate void RecieveEventType(string Response);
+        public delegate void RecieveEventType(string response);
         public event RecieveEventType RecieveNewBidderEvent;
         public event RecieveEventType RecieveDescriptionEvent;
         public event RecieveEventType RecieveNewHighestEvent;
         public event RecieveEventType RecieveEstimatedEvent;
+        public event RecieveEventType RecieveMessageEvent;
         private string _servername;
-        private int port;
+        private int _port;
 
-        private TcpClient serverSocket;
-        private NetworkStream netStream;
-        private StreamWriter writer;
-        private StreamReader reader;
-        private Thread readerThread;
+        private TcpClient _serverSocket;
+        private NetworkStream _netStream;
+        private StreamWriter _writer;
+        private StreamReader _reader;
+        private Thread _readerThread;
 
         public ServerHandler(string servername, int port)
         {
             this._servername = servername;
-            this.port = port;
+            this._port = port;
         }
         public void Open()
         {
-            serverSocket = new TcpClient("127.0.0.1", 12000);
-            netStream = serverSocket.GetStream();
-            writer = new StreamWriter(netStream);
-            reader = new StreamReader(netStream);
-            readerThread = new Thread(ReaderThreadMethod);
-            readerThread.Start();
+            _serverSocket = new TcpClient("127.0.0.1", 12000);
+            _netStream = _serverSocket.GetStream();
+            _writer = new StreamWriter(_netStream);
+            _reader = new StreamReader(_netStream);
+            _readerThread = new Thread(ReaderThreadMethod);
+            _readerThread.Start();
         }
         public void Close()
         {
-            writer.Close();
-            reader.Close();
-            netStream.Close();
-            serverSocket.Close();
-            serverSocket = null;
+            _writer.Close();
+            _reader.Close();
+            _netStream.Close();
+            _serverSocket.Close();
+            _serverSocket = null;
         }
 
         public void WriteToSocket(string command, string bid)
         {
-            writer.WriteLine(command);
-            writer.Flush();
-            writer.WriteLine(bid);
-            writer.Flush();
+            _writer.WriteLine(command);
+            _writer.Flush();
+            _writer.WriteLine(bid);
+            _writer.Flush();
 
             // en alternativ måde
 
@@ -72,7 +73,7 @@ namespace projekt_Auktionshuset
         {
             try
             {
-                return reader.ReadLine();
+                return _reader.ReadLine();
             }
             catch
             {
@@ -81,8 +82,8 @@ namespace projekt_Auktionshuset
         }
         public string RecieveMessage()
         {
-            string msg = ReadLineFromSocket();
-            return msg;
+            string message = ReadLineFromSocket();
+            return message;
         }
         private void ReaderThreadMethod()
         {
@@ -112,6 +113,11 @@ namespace projekt_Auktionshuset
                         string currentPrice = ReadLineFromSocket();
                         if (RecieveNewHighestEvent != null)
                             RecieveNewHighestEvent(currentPrice);
+                        break;
+                    case "MESSAGE":
+                        String text = ReadLineFromSocket();
+                        if (RecieveMessageEvent != null)
+                            RecieveMessageEvent(text);
                         break;
                 }
             }

@@ -13,8 +13,8 @@
         <Button x:Name="ButtonSend" Content="Send" HorizontalAlignment="Center" Margin="490,387,75,0" VerticalAlignment="Top" Width="83" RenderTransformOrigin="0.41,0.15" Height="23" Click="ButtonSend_Click" KeyDown="ButtonSend_KeyDown"/>
         <Button x:Name="ButtonExit" Content="Afslut" HorizontalAlignment="Right" Margin="0,435,32,0" VerticalAlignment="Top" Width="75" Click="ButtonExit_Click"/>
         <ListBox x:Name="ListBoxAuctionLog" HorizontalAlignment="Center" Height="319" Margin="330,63,75,0" VerticalAlignment="Top" Width="243"/>
-        <TextBlock x:Name="TextBlockDescription" HorizontalAlignment="Left" Margin="66,63,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="138" Width="131"/>
-        <TextBlock x:Name="TextBlockEstimatedPrice" HorizontalAlignment="Left" Margin="66,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="67"/>
-        <TextBlock x:Name="TextBlockCurrentPrice" HorizontalAlignment="Left" Margin="66,250,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="67"/>
+        <TextBlock x:Name="TextBlockDescription" HorizontalAlignment="Left" Margin="66,177,0,0" TextWrapping="Wrap" Text="Description: " VerticalAlignment="Top" Height="138" Width="149"/>
+        <TextBlock x:Name="TextBlockEstimatedPrice" HorizontalAlignment="Left" Margin="66,58,0,0" TextWrapping="Wrap" Text="Estimated price: " VerticalAlignment="Top" Height="20" Width="149"/>
+        <TextBlock x:Name="TextBlockCurrentPrice" HorizontalAlignment="Left" Margin="66,121,0,0" TextWrapping="Wrap" Text="Current bid: " VerticalAlignment="Top" Height="20" Width="149"/>
     </Grid>
 </Window>
