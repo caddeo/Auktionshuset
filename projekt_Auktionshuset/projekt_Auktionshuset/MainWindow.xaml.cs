@@ -102,8 +102,7 @@ namespace projekt_Auktionshuset
         {
             serverHandler.Close();
         }
-        //kommentar 2
-        //Kommentar 3
+
         private void TextboxUserInput_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
                 serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
