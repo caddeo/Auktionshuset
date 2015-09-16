@@ -86,5 +86,11 @@ namespace projekt_Auktionshuset
         {
             serverHandler.WriteToSocket("DISCONNECT", "");
         }
+
+        private void ButtonSend_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter) {
+                serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
+            }
+        }
     }
 }
