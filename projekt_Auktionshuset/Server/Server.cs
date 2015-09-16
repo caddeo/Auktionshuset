@@ -13,7 +13,7 @@ namespace Server
     {
 
         private Broadcaster _broadcaster;
-
+        private Aktion _aktion;
         private bool running;
 
         public Server(int port, string ip)
@@ -23,11 +23,16 @@ namespace Server
             var IP = IPAddress.Parse(ip);
             TcpListener listener = new TcpListener(IP, port);
 
-            running = true;
+            Console.WriteLine("Server klar til input");
+
+            while (!running)
+            {
+                HandleInput();
+            }
 
             listener.Start();
-            
-            System.Console.WriteLine("Server klar");
+
+            System.Console.WriteLine("Server klar til bruger");
 
             while (running)
             {
@@ -40,6 +45,34 @@ namespace Server
                 /* Start det i en ny tråd */
                 Thread clientThread = new Thread(handler.RunClient);
                 clientThread.Start();
+            }
+        }
+
+        public void HandleInput()
+        {
+            string input = Console.ReadLine();
+
+            if (input?.Trim().ToLower() == "new")
+            {
+                // name,  description, estimatedPrice, currentPrice, highestBidder
+
+                try
+                {
+                    string name = Console.ReadLine();
+                    string description = Console.ReadLine();
+                    double estimatedprice = double.Parse(Console.ReadLine());
+                    double currentprice = double.Parse(Console.ReadLine());
+
+                    Aktion aktion = new Aktion(name, description, estimatedprice, currentprice, null);
+
+                    _aktion = aktion;
+
+                    running = true;
+                }
+                catch(Exception exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
             }
         }
     }
