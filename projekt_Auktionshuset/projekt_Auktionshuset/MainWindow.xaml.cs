@@ -35,12 +35,13 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveEstimatedEvent += OnRecieveEstimatedEvent;
             serverHandler.RecieveMessageEvent += OnRecieveMessageEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
+            
         }
         private void OnRecieveNewBidderEvent(string bidder)
         {
             if (!this.Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bidder);
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
                 return;
             }
             ListBoxAuctionLog.Items.Add("New bid: " + bidder);
@@ -100,6 +101,10 @@ namespace projekt_Auktionshuset
             if (e.Key == Key.Enter) {
                 serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
             }
+        }
+        private void MainWindow_OnClosed(object sender, EventArgs e)
+        {
+            serverHandler.Close();
         }
     }
 }

@@ -18,6 +18,8 @@ namespace projekt_Auktionshuset
         private string _servername;
         private int _port;
 
+        private bool _clientRunning;
+
         private TcpClient _serverSocket;
         private NetworkStream _netStream;
         private StreamWriter _writer;
@@ -37,6 +39,7 @@ namespace projekt_Auktionshuset
             _reader = new StreamReader(_netStream);
             _readerThread = new Thread(ReaderThreadMethod);
             _readerThread.Start();
+            _clientRunning = true;
         }
         public void Close()
         {
@@ -45,6 +48,7 @@ namespace projekt_Auktionshuset
             _netStream.Close();
             _serverSocket.Close();
             _serverSocket = null;
+            _clientRunning = false;
         }
 
         public void WriteToSocket(string command, string bid)
@@ -87,7 +91,7 @@ namespace projekt_Auktionshuset
         }
         private void ReaderThreadMethod()
         {
-            while (true)
+            while (_clientRunning == true)
             {
                 string command = ReadLineFromSocket();
                 Console.WriteLine(command);
