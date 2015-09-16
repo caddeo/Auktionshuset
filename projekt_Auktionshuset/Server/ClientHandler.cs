@@ -141,6 +141,7 @@ namespace Server
 
                 _broadcaster.Broadcast("CLIENT: " + input);
             }
+
             // hvis den er null
             else
             {
