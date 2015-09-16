@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace projekt_Auktionshuset
 {
@@ -94,13 +95,14 @@ namespace projekt_Auktionshuset
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
-            serverHandler.WriteToSocket("DISCONNECT", "");
-            serverHandler.Close();
+            Close();
         }
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
+            serverHandler.WriteToSocket("DISCONNECT", "");
             serverHandler.Close();
+            Close();
         }
 
         private void TextboxUserInput_KeyDown(object sender, KeyEventArgs e) {
@@ -108,6 +110,16 @@ namespace projekt_Auktionshuset
                 serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
                 TextboxUserInput.Clear();
             }
+        }
+
+        private void TextboxUserInput_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+        private static bool IsTextAllowed(string text)
+        {
+            Regex regex = new Regex("[^0-9.-]+"); //regex that matches disallowed text
+            return !regex.IsMatch(text);
         }
     }
 }
