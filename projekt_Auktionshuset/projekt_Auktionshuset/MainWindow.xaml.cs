@@ -89,6 +89,7 @@ namespace projekt_Auktionshuset
         private void ButtonSend_Click(object sender, RoutedEventArgs e)
         {
             serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
+            TextboxUserInput.Clear();
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
@@ -97,14 +98,16 @@ namespace projekt_Auktionshuset
             serverHandler.Close();
         }
 
-        private void ButtonSend_KeyDown(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Enter) {
-                serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
-            }
-        }
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
             serverHandler.Close();
+        }
+
+        private void TextboxUserInput_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter) {
+                serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
+                TextboxUserInput.Clear();
+            }
         }
     }
 }
