@@ -11,12 +11,15 @@ namespace projekt_Auktionshuset
     class ServerHandler
     {
         public delegate void RecieveEventType(string response);
+
+        public event RecieveEventType RecieveNameEvent;
         public event RecieveEventType RecieveNewBidderEvent;
         public event RecieveEventType RecieveDescriptionEvent;
         public event RecieveEventType RecieveNewHighestEvent;
         public event RecieveEventType RecieveEstimatedEvent;
         public event RecieveEventType RecieveMessageEvent;
         public event RecieveEventType RecieveDisconnectEvent;
+
         private string _servername;
         private int _port;
 
@@ -34,7 +37,7 @@ namespace projekt_Auktionshuset
         }
         public void Open()
         {
-            _serverSocket = new TcpClient("127.0.0.1", 12000);
+            _serverSocket = new TcpClient("10.140.65.160", 12000);
             _netStream = _serverSocket.GetStream();
             _writer = new StreamWriter(_netStream);
             _reader = new StreamReader(_netStream);
@@ -93,6 +96,9 @@ namespace projekt_Auktionshuset
                             RecieveNewHighestEvent(bid);
                         break;
                     case "DESCRIPTION":
+                        string name = ReadLineFromSocket();
+                        if (RecieveNameEvent != null)
+                            RecieveNameEvent(name);
                         string desc = ReadLineFromSocket();
                         if (RecieveDescriptionEvent != null)
                             RecieveDescriptionEvent(desc);

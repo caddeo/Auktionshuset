@@ -36,6 +36,7 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveEstimatedEvent += OnRecieveEstimatedEvent;
             serverHandler.RecieveMessageEvent += OnRecieveMessageEvent;
             serverHandler.RecieveDisconnectEvent += OnRecieveDisconnectEvent;
+            serverHandler.RecieveNameEvent += OnRecieveNameEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
             
         }
@@ -46,7 +47,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
                 return;
             }
-            ListBoxAuctionLog.Items.Add("New bid: " + bidder);
+            ListBoxAuctionLog.Items.Add("Nyt bud: " + bidder);
 
         }
         private void OnRecieveNewBidEvent(string bid)
@@ -56,7 +57,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
                 return;
             }
-            TextBlockCurrentPrice.Text = "Current price: " + bid;
+            TextBlockCurrentPrice.Text = "Nuværende bud: " + bid;
         }
 
         private void OnRecieveDescriptionEvent(string desc)
@@ -66,7 +67,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
                 return;
             }
-            TextBlockDescription.Text = "Description: \n" + desc;
+            TextBlockDescription.Text = "Beskrivelse: \n" + desc;
         }
         private void OnRecieveEstimatedEvent(string price)
         {
@@ -75,7 +76,7 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveEstimatedEvent), price);
                 return;
             }
-            TextBlockEstimatedPrice.Text = "Estimated price: " + price;
+            TextBlockEstimatedPrice.Text = "Estimeret pris: " + price;
         }
 
         private void OnRecieveMessageEvent(string text)
@@ -85,7 +86,16 @@ namespace projekt_Auktionshuset
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
                 return;
             }
-            ListBoxAuctionLog.Items.Add("Auction message: " + text);
+            ListBoxAuctionLog.Items.Add("Auktion besked: " + text);
+        }
+        private void OnRecieveNameEvent(string name)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNameEvent), name);
+                return;
+            }
+            LabelAuctionName.Content = ("Auktionnavn: " + name);
         }
 
         private void ButtonSend_Click(object sender, RoutedEventArgs e)
@@ -119,7 +129,7 @@ namespace projekt_Auktionshuset
         }
         private static bool IsTextAllowed(string text)
         {
-            Regex regex = new Regex("[^0-9.-]+"); //regex that matches disallowed text
+            Regex regex = new Regex("[^0-9.-]+");
             return !regex.IsMatch(text);
         }
         private void OnRecieveDisconnectEvent(string text)
