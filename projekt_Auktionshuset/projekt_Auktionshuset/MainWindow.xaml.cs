@@ -22,9 +22,11 @@ namespace projekt_Auktionshuset
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window
+    {
         ServerHandler serverHandler;
-        public MainWindow() {
+        public MainWindow()
+        {
             InitializeComponent();
             serverHandler = new ServerHandler("127.0.0.1", 12000);
             serverHandler.Open();
@@ -36,65 +38,79 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveDisconnectEvent += OnRecieveDisconnectEvent;
             serverHandler.RecieveNameEvent += OnRecieveNameEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
-
+            TextboxUserInput.Focus();
         }
-        private void OnRecieveNewBidderEvent(string bidder) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveNewBidderEvent(string bidder)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
                 return;
             }
             ListBoxAuctionLog.Items.Add("Nyt bud: " + bidder);
 
         }
-        private void OnRecieveNewBidEvent(string bid) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveNewBidEvent(string bid)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
                 return;
             }
             TextBlockCurrentPrice.Text = "Nuværende bud: " + bid;
         }
 
-        private void OnRecieveDescriptionEvent(string desc) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveDescriptionEvent(string desc)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
                 return;
             }
             TextBlockDescription.Text = "Beskrivelse: \n" + desc;
         }
-        private void OnRecieveEstimatedEvent(string price) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveEstimatedEvent(string price)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveEstimatedEvent), price);
                 return;
             }
             TextBlockEstimatedPrice.Text = "Estimeret pris: " + price;
         }
 
-        private void OnRecieveMessageEvent(string text) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveMessageEvent(string text)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
                 return;
             }
             ListBoxAuctionLog.Items.Add("Auktion besked: " + text);
         }
-        private void OnRecieveNameEvent(string name) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveNameEvent(string name)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNameEvent), name);
                 return;
             }
             LabelAuctionName.Content = ("Auktionnavn: " + name);
         }
 
-        private void ButtonSend_Click(object sender, RoutedEventArgs e) {
+        private void ButtonSend_Click(object sender, RoutedEventArgs e)
+        {
             serverHandler.WriteToSocket("BID", TextboxUserInput.Text);
             TextboxUserInput.Clear();
         }
 
-        private void ButtonExit_Click(object sender, RoutedEventArgs e) {
+        private void ButtonExit_Click(object sender, RoutedEventArgs e)
+        {
             Close();
         }
 
-        private void MainWindow_OnClosed(object sender, EventArgs e) {
-            serverHandler.WriteToSocket("DISCONNECT", "");
+        private void MainWindow_OnClosed(object sender, EventArgs e)
+        {
             serverHandler.Close();
             Close();
         }
@@ -106,15 +122,19 @@ namespace projekt_Auktionshuset
             }
         }
 
-        private void TextboxUserInput_OnPreviewTextInput(object sender, TextCompositionEventArgs e) {
+        private void TextboxUserInput_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
             e.Handled = !IsTextAllowed(e.Text);
         }
-        private static bool IsTextAllowed(string text) {
+        private static bool IsTextAllowed(string text)
+        {
             Regex regex = new Regex("[^0-9.-]+");
             return !regex.IsMatch(text);
         }
-        private void OnRecieveDisconnectEvent(string text) {
-            if (!this.Dispatcher.CheckAccess()) {
+        private void OnRecieveDisconnectEvent(string text)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
                 this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDisconnectEvent), text);
                 return;
             }
