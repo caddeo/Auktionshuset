@@ -28,7 +28,7 @@ namespace projekt_Auktionshuset
         public MainWindow()
         {
             InitializeComponent();
-            serverHandler = new ServerHandler("127.0.0.1", 12000);
+            serverHandler = new ServerHandler("10.140.65.160", 12000);
             serverHandler.Open();
             serverHandler.RecieveNewBidderEvent += OnRecieveNewBidderEvent;
             serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;

@@ -37,7 +37,7 @@ namespace projekt_Auktionshuset
         }
         public void Open()
         {
-            _serverSocket = new TcpClient("10.140.65.160", 12000);
+            _serverSocket = new TcpClient(_servername, _port);
             _netStream = _serverSocket.GetStream();
             _writer = new StreamWriter(_netStream);
             _reader = new StreamReader(_netStream);
