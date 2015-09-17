@@ -22,5 +22,10 @@ namespace Server
             _name = ipaddress.Substring(ipaddress.Length-3, 3);
             _currentbid = 0;
         }
+
+        public void SetCurrentBid(double currentbid)
+        {
+            _currentbid = currentbid;
+        }
     }
 }

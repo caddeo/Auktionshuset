@@ -21,6 +21,7 @@ namespace Server
         private Broadcaster _broadcaster;
 
         private Client client;
+        private Auction _auction;
 
         // serverens runtime status
         private bool _running; 
@@ -30,12 +31,14 @@ namespace Server
             this._clientSocket = clientSocket;
             this._broadcaster = broadcaster;
 
+            _auction = null;
+
             /* Udskriver IP'en */
             string clientIp = clientSocket.RemoteEndPoint.ToString();
             IPAddress ip = IPAddress.Parse(clientIp.Substring(0, clientIp.Length - 5));
 
-
             client = new Client(clientIp.Substring(0, clientIp.Length - 5));
+            _broadcaster.Clients.Add(client);
 
             Console.WriteLine(clientIp +" connected");
         }
@@ -124,6 +127,8 @@ namespace Server
             }
         }
 
+
+
         private void HandleInput() 
         {
             // Behandling af input fra klient
@@ -132,19 +137,32 @@ namespace Server
             // Tjekker om input er null (den er typisk null når man tryker kryds)
             if (input != null)
             {
-                // Brug Trim() for at sikre at det er "RAW" input
-                // Indtil der bliver inputtet "slut" så kør
-                if (input.Trim().ToLower() == "quit")
-                {
-                    _running = false;
-                }
+                /*if (input.Trim().ToLower() == "usercount")
 
-                if (input.Trim().ToLower() == "usercount")
                 {
                     _broadcaster.Broadcast(_broadcaster.BroadcastClientCount());
+                }*/
+
+                switch (input.Trim().ToUpper())
+                {
+                    case "CONNECTED":
+                        Send("DESCRIPTION");
+                        Send(_auction.Description);
+                        Send("ESTIMATEDPRICE");
+                        Send(_auction.CurrentPrice.ToString());
+                        Send("CURRENTPRICE");
+                        Send(_auction.CurrentPrice.ToString());
+                        break;
+                    case "BID":
+                        string clientBidInput = Recieve();
+                        HandleBid(clientBidInput);
+                        break;
+                    case "DISCONNECT":
+                        _running = false;
+                        break;
                 }
 
-                _broadcaster.Broadcast("CLIENT: " + input);
+                //_broadcaster.Broadcast("CLIENT: " + input);
             }
 
             // hvis den er null
@@ -152,6 +170,41 @@ namespace Server
             {
                 _running = false;
             }
+        }
+
+        private void HandleBid(string bid)
+        {
+            try
+            {
+                double clientBid = double.Parse(bid);
+
+                if (clientBid > _auction.CurrentPrice)
+                {
+                    // bud er ok
+                    client.SetCurrentBid(clientBid);
+                    _auction.SetHighestBid(client, clientBid);
+
+                    _broadcaster.Broadcast("NEWBIDDER");
+                    _broadcaster.Broadcast(client.Name + " er den nye højeste bydende (" + clientBid + " kr.)");
+                    _broadcaster.Broadcast("NEWHIGHEST");
+                    _broadcaster.Broadcast(clientBid.ToString());
+                }
+                else
+                {
+                    // bud er ikke ok
+                    Send("Dit bud er ikke over "+_auction.CurrentPrice+" kr!");
+                }
+            }
+            catch(Exception e) 
+            {
+                Console.WriteLine("HandleBid() "+e.Message);
+            }
+
+        }
+
+        public void SetAuction(Auction auction)
+        {
+            _auction = auction;
         }
 
         public void Broadcast(string message)

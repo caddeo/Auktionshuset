@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aktion.cs" />
+    <Compile Include="Auction.cs" />
     <Compile Include="Broadcaster.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="ClientHandler.cs" />

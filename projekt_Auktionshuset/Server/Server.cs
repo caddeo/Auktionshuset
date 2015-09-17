@@ -13,7 +13,7 @@ namespace Server
     {
 
         private Broadcaster _broadcaster;
-        private Aktion _aktion;
+        private Auction _auction;
         private bool running;
 
         public Server(int port, string ip)
@@ -23,19 +23,19 @@ namespace Server
             var IP = IPAddress.Parse(ip);
             TcpListener listener = new TcpListener(IP, port);
 
-            Console.WriteLine("Server klar til input");
+
 
             while (!running)
             {
+                Console.WriteLine("Server klar til input");
                 HandleInput();
             }
 
             listener.Start();
 
-            System.Console.WriteLine("Server klar til bruger");
-
             while (running)
             {
+                System.Console.WriteLine("Server klar til bruger");
                 /* En socket forbinder*/
                 Socket clientSocket = listener.AcceptSocket();
 
@@ -45,6 +45,8 @@ namespace Server
                 /* Start det i en ny tråd */
                 Thread clientThread = new Thread(handler.RunClient);
                 clientThread.Start();
+
+                handler.SetAuction(_auction);
             }
         }
 
@@ -58,14 +60,21 @@ namespace Server
 
                 try
                 {
+                    Console.WriteLine("Auction's navn:");
                     string name = Console.ReadLine();
+
+                    Console.WriteLine("Auction's beskrivelse:");
                     string description = Console.ReadLine();
+
+                    Console.WriteLine("Auction's estimerede pris:");
                     double estimatedprice = double.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Auction's pris:");
                     double currentprice = double.Parse(Console.ReadLine());
 
-                    Aktion aktion = new Aktion(name, description, estimatedprice, currentprice, null);
+                    Auction auction = new Auction(name, description, estimatedprice, currentprice, null);
 
-                    _aktion = aktion;
+                    _auction = auction;
 
                     running = true;
                 }
