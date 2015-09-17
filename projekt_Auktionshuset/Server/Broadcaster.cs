@@ -17,6 +17,8 @@ namespace Server
         // tilmeld og afmeld skal fra clienthanler til controller
         private List<ClientHandler> _clients;
 
+        public List<Client> Clients; 
+
         public Broadcaster()
         {
             this._clients = new List<ClientHandler>();

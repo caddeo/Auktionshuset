@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Aktion
+    class Auction
     {
         public string Name { get { return _name; } }
         public string Description { get { return _description; } }
         public double EstimatedPrice { get { return _estimatedprice; } }
         public double CurrentPrice { get { return _currentprice; } }
         public double TimeLeft { get { return _timeleft; } }
-        public Client HighestBidder { get { return _highestbidder; } }'
+        public Client HighestBidder { get { return _highestbidder; } }
         // is running?
 
         // name, desc, estimatedprice, currentprice, timeleft, highestbider
@@ -24,15 +24,21 @@ namespace Server
         private double _timeleft;
         private Client _highestbidder;
 
-        public Aktion(string name, string description, double estimatedPrice, double currentPrice,
+        public Auction(string name, string description, double estimatedPrice, double currentPrice,
             Client highestBidder)
         {
             this._name = name;
             this._description = description;
             this._estimatedprice = estimatedPrice;
             this._currentprice = currentPrice;
-            this._timeleft = 10.0;
+            this._timeleft = 11.0; // 11 == ikke begyndt
             this._highestbidder = highestBidder;
+        }
+
+        public void SetHighestBid(Client client, double bid)
+        {
+            _highestbidder = client;
+            _currentprice = bid;
         }
     }
 }
