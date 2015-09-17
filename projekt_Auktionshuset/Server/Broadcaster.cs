@@ -22,6 +22,7 @@ namespace Server
         public Broadcaster()
         {
             this._clients = new List<ClientHandler>();
+            this.Clients = new List<Client>();
         }
 
         /* Subscribe fra listen */

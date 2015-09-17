@@ -23,11 +23,10 @@ namespace Server
             var IP = IPAddress.Parse(ip);
             TcpListener listener = new TcpListener(IP, port);
 
-
-
+            Console.WriteLine("Server klar til input");
             while (!running)
             {
-                Console.WriteLine("Server klar til input");
+                Console.WriteLine("Skriv \'new\' for at starte en ny auktion.");
                 HandleInput();
             }
 
@@ -41,12 +40,11 @@ namespace Server
 
                 /* Lav en ny client handler til forbindelsen */
                 ClientHandler handler = new ClientHandler(clientSocket, _broadcaster);
+                handler.SetAuction(_auction);
 
                 /* Start det i en ny tråd */
                 Thread clientThread = new Thread(handler.RunClient);
                 clientThread.Start();
-
-                handler.SetAuction(_auction);
             }
         }
 
