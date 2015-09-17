@@ -16,7 +16,7 @@ namespace Server
         private Auction _auction;
         private bool _running;
 
-        //
+
         public Server(int port, string ip)
         {
             _broadcaster = new Broadcaster();
