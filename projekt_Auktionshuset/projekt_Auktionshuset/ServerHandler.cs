@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Documents;
 
 namespace projekt_Auktionshuset
 {
@@ -15,6 +16,7 @@ namespace projekt_Auktionshuset
         public event RecieveEventType RecieveNewHighestEvent;
         public event RecieveEventType RecieveEstimatedEvent;
         public event RecieveEventType RecieveMessageEvent;
+        public event RecieveEventType RecieveDisconnectEvent;
         private string _servername;
         private int _port;
 
@@ -25,7 +27,6 @@ namespace projekt_Auktionshuset
         private StreamWriter _writer;
         private StreamReader _reader;
         private Thread _readerThread;
-
         public ServerHandler(string servername, int port)
         {
             this._servername = servername;
@@ -50,28 +51,12 @@ namespace projekt_Auktionshuset
             _serverSocket = null;
             _clientRunning = false;
         }
-
         public void WriteToSocket(string command, string bid)
         {
             _writer.WriteLine(command);
             _writer.Flush();
             _writer.WriteLine(bid);
             _writer.Flush();
-
-            // en alternativ måde
-
-            //if (Regex.IsMatch(bid, @"[a-zA-Z]"))
-            //{
-            //    writer.WriteLine("COMMAND");
-            //    writer.Flush();
-            //    writer.WriteLine(bid);
-            //    writer.Flush();
-            //}
-            //else
-            //{
-            //    writer.Write(bid);
-            //    writer.Flush();
-            //}
         }
         private string ReadLineFromSocket()
         {
@@ -123,6 +108,12 @@ namespace projekt_Auktionshuset
                         if (RecieveMessageEvent != null)
                             RecieveMessageEvent(text);
                         break;
+                    case "DISCONNECT":
+                        String disconnect = "Disconnect";
+                        if (RecieveDisconnectEvent != null)
+                            RecieveDisconnectEvent(disconnect);
+                        break;
+
                 }
             }
         }

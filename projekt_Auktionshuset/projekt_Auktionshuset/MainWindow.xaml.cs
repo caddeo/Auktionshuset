@@ -35,6 +35,7 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveDescriptionEvent += OnRecieveDescriptionEvent;
             serverHandler.RecieveEstimatedEvent += OnRecieveEstimatedEvent;
             serverHandler.RecieveMessageEvent += OnRecieveMessageEvent;
+            serverHandler.RecieveDisconnectEvent += OnRecieveDisconnectEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
             
         }
@@ -120,6 +121,15 @@ namespace projekt_Auktionshuset
         {
             Regex regex = new Regex("[^0-9.-]+"); //regex that matches disallowed text
             return !regex.IsMatch(text);
+        }
+        private void OnRecieveDisconnectEvent(string text)
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
+                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDisconnectEvent), text);
+                return;
+            }
+            serverHandler.Close();
         }
     }
 }
