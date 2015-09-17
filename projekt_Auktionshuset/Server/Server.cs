@@ -16,13 +16,22 @@ namespace Server
         private Auction _auction;
         private bool _running;
 
+        private string _servername;
+        private int _port;
+
 
         public Server(int port, string ip)
         {
+            _servername = ip;
+            _port = port;
+        }
+
+        public void Run()
+        {
             _broadcaster = new Broadcaster();
 
-            var IP = IPAddress.Parse(ip);
-            TcpListener listener = new TcpListener(IP, port);
+            IPAddress ip = IPAddress.Parse(_servername);
+            TcpListener listener = new TcpListener(ip, _port);
 
             _running = true;
 
@@ -50,7 +59,7 @@ namespace Server
                 Thread clientThread = new Thread(handler.RunClient);
 
                 /* Start trådene */
-                clientThread.Start();       
+                clientThread.Start();
             }
         }
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
@@ -61,7 +70,7 @@ namespace Server
             switch (_auction.TimeLeft)
             {
                 // switcher ved hvor lang tid der er tilbage
-                case 18000:     // 18 sek
+                case 17000:     // 18 sek
                     break;
                 case 8000:  // 8
                     _broadcaster.Broadcast("MESSAGE");
