@@ -47,11 +47,15 @@ namespace projekt_Auktionshuset
         }
         public void Close()
         {
-            _writer.Close();
-            _reader.Close();
-            _netStream.Close();
-            _serverSocket.Close();
-            _serverSocket = null;
+            if (_serverSocket.Connected.Equals(true))
+            {
+                WriteToSocket("DISCONNECT", "");
+                _writer.Close();
+                _reader.Close();
+                _netStream.Close();
+                _serverSocket.Close();
+                _serverSocket = null;
+            }
             _clientRunning = false;
         }
         public void WriteToSocket(string command, string bid)

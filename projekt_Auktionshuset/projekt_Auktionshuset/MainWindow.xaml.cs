@@ -38,7 +38,7 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveDisconnectEvent += OnRecieveDisconnectEvent;
             serverHandler.RecieveNameEvent += OnRecieveNameEvent;
             serverHandler.WriteToSocket("CONNECTED", "");
-            
+            TextboxUserInput.Focus();
         }
         private void OnRecieveNewBidderEvent(string bidder)
         {
@@ -111,7 +111,6 @@ namespace projekt_Auktionshuset
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
-            serverHandler.WriteToSocket("DISCONNECT", "");
             serverHandler.Close();
             Close();
         }
