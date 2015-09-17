@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Server
@@ -12,18 +14,20 @@ namespace Server
         public string Description { get { return _description; } }
         public double EstimatedPrice { get { return _estimatedprice; } }
         public double CurrentPrice { get { return _currentprice; } }
-        public double TimeLeft { get { return _timeleft; } }
+        public int TimeLeft { get { return _timeLeft; } }
         public Client HighestBidder { get { return _highestbidder; } }
-        // is running?
+
+        private Object _objectLock = new Object();
 
         // name, desc, estimatedprice, currentprice, timeleft, highestbider
         private string _name;
         private string _description;
         private double _estimatedprice;
         private double _currentprice;
-        private double _timeleft;
+        private int _timeLeft;
         private Client _highestbidder;
 
+        public System.Timers.Timer Timer;
         public Auction(string name, string description, double estimatedPrice, double currentPrice,
             Client highestBidder)
         {
@@ -31,14 +35,30 @@ namespace Server
             this._description = description;
             this._estimatedprice = estimatedPrice;
             this._currentprice = currentPrice;
-            this._timeleft = 11.0; // 11 == ikke begyndt
             this._highestbidder = highestBidder;
+            this._timeLeft = 17000;
+
+            // Timer
+            this.Timer = new System.Timers.Timer();
+            this.Timer.Interval = 1000;
+
         }
 
         public void SetHighestBid(Client client, double bid)
         {
-            _highestbidder = client;
-            _currentprice = bid;
+            lock (_objectLock)
+            {
+                _highestbidder = client;
+                _currentprice = bid;
+            }
+        }
+
+        public void SetTimeLeft(int time)
+        {
+            lock (_objectLock)
+            {
+                _timeLeft = time;
+            }
         }
     }
 }

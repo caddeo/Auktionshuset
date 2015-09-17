@@ -14,7 +14,8 @@ namespace Server
 
         private Broadcaster _broadcaster;
         private Auction _auction;
-        private bool running;
+        private bool _running;
+
 
         public Server(int port, string ip)
         {
@@ -23,17 +24,20 @@ namespace Server
             var IP = IPAddress.Parse(ip);
             TcpListener listener = new TcpListener(IP, port);
 
-            Console.WriteLine("Server klar til input");
-            while (!running)
-            {
-                Console.WriteLine("Skriv \'new\' for at starte en ny auktion.");
-                HandleInput();
-            }
+            _running = true;
 
             listener.Start();
 
-            while (running)
+            Console.WriteLine("Skriv \'new\' for at starte en ny auktion.");
+
+            while (_running)
             {
+
+                /* Gør så at serveren kan skrive input*/
+                Thread serverInputThread = new Thread(HandleInput);
+
+                serverInputThread.Start();
+
                 System.Console.WriteLine("Server klar til bruger");
                 /* En socket forbinder*/
                 Socket clientSocket = listener.AcceptSocket();
@@ -44,41 +48,88 @@ namespace Server
 
                 /* Start det i en ny tråd */
                 Thread clientThread = new Thread(handler.RunClient);
-                clientThread.Start();
+
+                /* Start trådene */
+                clientThread.Start();       
             }
+        }
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            int timeleft = _auction.TimeLeft;
+            Console.WriteLine("Time left : "+timeleft);
+
+            switch (_auction.TimeLeft)
+            {
+                // switcher ved hvor lang tid der er tilbage
+                case 18000:     // 18 sek
+                    break;
+                case 8000:  // 8
+                    _broadcaster.Broadcast("MESSAGE");
+                    _broadcaster.Broadcast("Første!");
+                    break;
+                case 3000:  // 3
+                    _broadcaster.Broadcast("MESSAGE");
+                    _broadcaster.Broadcast("Anden!");
+                    break;
+                case 0:     // 0
+                    _auction.Timer.Stop();
+                    _broadcaster.Broadcast("MESSAGE");
+                    _broadcaster.Broadcast("Tredje! Solgt til " + _auction.HighestBidder.Name + " for " + _auction.CurrentPrice);
+                    Console.WriteLine("Solgt til IP " + _auction.HighestBidder.IPAddress + " (" + _auction.HighestBidder.Name + ") for " + _auction.CurrentPrice);
+                    break;
+            }
+
+            _auction.SetTimeLeft(timeleft - 1000);
         }
 
         public void HandleInput()
         {
-            string input = Console.ReadLine();
-
-            if (input?.Trim().ToLower() == "new")
+            while (_running)
             {
-                // name,  description, estimatedPrice, currentPrice, highestBidder
+                Console.WriteLine("Server klar til input");
+                string input = Console.ReadLine();
 
                 try
                 {
-                    Console.WriteLine("Auction's navn:");
-                    string name = Console.ReadLine();
+                    switch (input?.Trim().ToUpper())
+                    {
+                        case "NEW":
+                            if (_auction == null)
+                            {
+                                bool inputrunning = true;
 
-                    Console.WriteLine("Auction's beskrivelse:");
-                    string description = Console.ReadLine();
+                                while (inputrunning)
+                                {
+                                    Console.WriteLine("Auction's navn:");
+                                    string name = Console.ReadLine();
 
-                    Console.WriteLine("Auction's estimerede pris:");
-                    double estimatedprice = double.Parse(Console.ReadLine());
+                                    Console.WriteLine("Auction's beskrivelse:");
+                                    string description = Console.ReadLine();
 
-                    Console.WriteLine("Auction's pris:");
-                    double currentprice = double.Parse(Console.ReadLine());
+                                    Console.WriteLine("Auction's estimerede pris:");
+                                    double estimatedprice = double.Parse(Console.ReadLine());
 
-                    Auction auction = new Auction(name, description, estimatedprice, currentprice, null);
+                                    Console.WriteLine("Auction's pris:");
+                                    double currentprice = double.Parse(Console.ReadLine());
 
-                    _auction = auction;
+                                    Auction auction = new Auction(name, description, estimatedprice, currentprice, null);
 
-                    running = true;
+                                    _auction = auction;
+
+                                    _auction.Timer.Elapsed += OnTimedEvent;
+                                    inputrunning = false;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Auktion allerede i gang");
+                            }
+                            break;
+                    }
                 }
-                catch(Exception exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("HandleInput() " + e.Message);
                 }
             }
         }

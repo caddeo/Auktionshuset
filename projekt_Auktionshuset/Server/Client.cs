@@ -19,13 +19,23 @@ namespace Server
         public Client(string ipaddress)
         {
             this._ipaddress = ipaddress;
-            _name = ipaddress.Substring(ipaddress.Length-3, 3);
-            _currentbid = 0;
+            this._name = GenerateName(ipaddress);
+            this._currentbid = 0;
+        }
+
+        // split en ip op og giv et navn til clienten
+        public string GenerateName(string ip)
+        {
+            string[] seperators = { ".", ":" };
+            string[] name = ip.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+
+            return name[name.Length - 2];
         }
 
         public void SetCurrentBid(double currentbid)
         {
-            _currentbid = currentbid;
+            this._currentbid = currentbid;
         }
+
     }
 }

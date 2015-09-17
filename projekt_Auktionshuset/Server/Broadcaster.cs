@@ -45,11 +45,5 @@ namespace Server
                 BroadcastMessage(message);
             }
         }
-
-        /* TIL TEST */
-        public string BroadcastClientCount()
-        {
-            return ""+_clients.Count;
-        }
     }
 }
