@@ -24,14 +24,11 @@ namespace projekt_Auktionshuset
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<string> AuctionMessages;
         ServerHandler serverHandler;
         public MainWindow()
         {
             InitializeComponent();
-            AuctionMessages = new List<string>();
-            ListBoxAuctionLog.ItemsSource = AuctionMessages;
-            serverHandler = new ServerHandler("127.0.0.1", 12000);
+            serverHandler = new ServerHandler("10.140.65.160", 12000);
             serverHandler.Open();
             serverHandler.RecieveNewBidderEvent += OnRecieveNewBidderEvent;
             serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;
@@ -50,8 +47,7 @@ namespace projekt_Auktionshuset
                 Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
                 return;
             }
-            AuctionMessages.Add("Nyt bud: " + bidder);
-            ListBoxAuctionLog.ScrollIntoView(ListBoxAuctionLog.Items[ListBoxAuctionLog.Items.Count - 1]);
+            ListBoxAuctionLog.Items.Add("Nyt bud: " + bidder);
         }
         private void OnRecieveNewBidEvent(string bid)
         {
@@ -89,8 +85,7 @@ namespace projekt_Auktionshuset
                 Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
                 return;
             }
-            AuctionMessages.Add("Auktion besked: " + text);
-            ListBoxAuctionLog.ScrollIntoView(ListBoxAuctionLog.Items[ListBoxAuctionLog.Items.Count - 1]);
+            ListBoxAuctionLog.Items.Add("Auktion besked: " + text);
         }
         private void OnRecieveNameEvent(string name)
         {

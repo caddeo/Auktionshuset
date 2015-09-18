@@ -123,6 +123,9 @@ namespace projekt_Auktionshuset
                         if (RecieveDisconnectEvent != null)
                             RecieveDisconnectEvent(disconnect);
                         break;
+                    case "NEWAUCTION":
+                        WriteToSocket("CONNECTED", "");
+                        break;
                 }
             }
         }
