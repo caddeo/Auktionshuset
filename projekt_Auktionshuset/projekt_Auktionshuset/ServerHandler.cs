@@ -48,7 +48,7 @@ namespace projekt_Auktionshuset
         public void Close()
         {
             if (_serverSocket.Connected.Equals(true) && _serverSocket != null)
-            {
+            {//
                 WriteToSocket("DISCONNECT", "");
                 _writer.Close();
                 _reader.Close();
