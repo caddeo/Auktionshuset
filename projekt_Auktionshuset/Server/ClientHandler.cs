@@ -23,6 +23,9 @@ namespace Server
         private Client client;
         private Auction _auction;
 
+        // har personen været disconnected;
+        private bool _disconnected;
+
         // serverens runtime status
         private bool _running; 
 
@@ -30,6 +33,8 @@ namespace Server
         {
             this._clientSocket = clientSocket;
             this._broadcaster = broadcaster;
+
+            this._disconnected = false;
 
             _auction = null;
 
@@ -61,7 +66,7 @@ namespace Server
 
             /* Disconnect */
             string clientIp = _clientSocket.RemoteEndPoint.ToString();
-            Console.WriteLine(clientIp+" disconnected");
+            Console.WriteLine(clientIp+"("+client.Name+") disconnected");
 
             this._netStream.Close();
             this._writer.Close();
@@ -99,6 +104,7 @@ namespace Server
         {
             try
             {
+
                 Broadcast("Server Klar til input");
                 _running = true;
 
@@ -113,12 +119,19 @@ namespace Server
                     if (_auction != null)
                     {
                         HandleInput();
+
+                        _disconnected = false;
                     }
                     else
                     {
-                        Send("MESSAGE");
-                        Send("Ingen auktion kørende - lukker forbindelse");
-                        Send("DISCONNECT");
+                        if (!_disconnected)
+                        {
+                            Send("MESSAGE");
+                            Send("Ingen auktion kørende");
+                            //Send("DISCONNECT");
+
+                            _disconnected = true;
+                        }
                     }
                 }
             }

@@ -45,5 +45,13 @@ namespace Server
                 BroadcastMessage(message);
             }
         }
+
+        public void SetAuction(Auction auction)
+        {
+            foreach (ClientHandler client in _clients)
+            {
+                client.SetAuction(auction);
+            }
+        }
     }
 }

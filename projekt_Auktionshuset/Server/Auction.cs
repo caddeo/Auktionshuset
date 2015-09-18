@@ -17,7 +17,9 @@ namespace Server
         public int TimeLeft { get { return _timeLeft; } }
         public Client HighestBidder { get { return _highestbidder; } }
 
-        private Object _objectLock = new Object();
+        // thread locks
+        private Object _bidLock = new Object();
+        private Object _timeLock = new Object();
 
         // name, desc, estimatedprice, currentprice, timeleft, highestbider
         private string _name;
@@ -46,7 +48,7 @@ namespace Server
 
         public void SetHighestBid(Client client, double bid)
         {
-            lock (_objectLock)
+            lock (_bidLock)
             {
                 _highestbidder = client;
                 _currentprice = bid;
@@ -55,7 +57,7 @@ namespace Server
 
         public void SetTimeLeft(int time)
         {
-            lock (_objectLock)
+            lock (_timeLock)
             {
                 _timeLeft = time;
             }

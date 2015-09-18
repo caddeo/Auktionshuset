@@ -26,42 +26,6 @@ namespace Server
             _port = port;
         }
 
-        public void Run()
-        {
-            _broadcaster = new Broadcaster();
-
-            IPAddress ip = IPAddress.Parse(_servername);
-            TcpListener listener = new TcpListener(ip, _port);
-
-            _running = true;
-
-            listener.Start();
-
-            Console.WriteLine("Skriv \'new\' for at starte en ny auktion.");
-
-            while (_running)
-            {
-
-                /* Gør så at serveren kan skrive input*/
-                Thread serverInputThread = new Thread(HandleInput);
-
-                serverInputThread.Start();
-
-                Console.WriteLine("Server klar til bruger");
-                /* En socket forbinder*/
-                Socket clientSocket = listener.AcceptSocket();
-
-                /* Lav en ny client handler til forbindelsen */
-                ClientHandler handler = new ClientHandler(clientSocket, _broadcaster);
-                handler.SetAuction(_auction);
-
-                /* Start det i en ny tråd */
-                Thread clientThread = new Thread(handler.RunClient);
-
-                /* Start trådene */
-                clientThread.Start();
-            }
-        }
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             int timeleft = _auction.TimeLeft;
@@ -75,10 +39,12 @@ namespace Server
                 case 8000:  // 8
                     _broadcaster.Broadcast("MESSAGE");
                     _broadcaster.Broadcast("Første!");
+                    Console.WriteLine("Første!");
                     break;
                 case 3000:  // 3
                     _broadcaster.Broadcast("MESSAGE");
                     _broadcaster.Broadcast("Anden!");
+                    Console.WriteLine("Anden!");
                     break;
                 case 0:     // 0
                     _auction.Timer.Stop();
@@ -91,7 +57,7 @@ namespace Server
             _auction.SetTimeLeft(timeleft - 1000);
         }
 
-        public void HandleInput()
+        private void HandleInput()
         {
             while (_running)
             {
@@ -125,6 +91,9 @@ namespace Server
 
                                     _auction = auction;
 
+                                    ConnectClients();
+                                    _broadcaster.SetAuction(auction);
+
                                     _auction.Timer.Elapsed += OnTimedEvent;
                                     inputrunning = false;
                                 }
@@ -134,12 +103,69 @@ namespace Server
                                 Console.WriteLine("Auktion allerede i gang");
                             }
                             break;
+                        case "RESTART":
+                            StopAuction();
+                            break;
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("HandleInput() " + e.Message);
                 }
+            }
+        }
+
+        // sender "NEWAUCTION" til klient så de opretter forbindelse
+        private void ConnectClients()
+        {
+            _broadcaster.Broadcast("NEWAUCTION");
+            _broadcaster.Broadcast("MESSAGE");
+            _broadcaster.Broadcast("Ny auktion sættes i gang");
+        }
+
+        private void StopAuction()
+        {
+            _auction.Timer.Stop();
+            _auction = null;
+            _broadcaster.SetAuction(null);
+
+            _broadcaster.Broadcast("MESSAGE");
+            _broadcaster.Broadcast("Auktion stoppet af serveren");
+        }
+
+
+        public void Run()
+        {
+            _broadcaster = new Broadcaster();
+
+            IPAddress ip = IPAddress.Parse(_servername);
+            TcpListener listener = new TcpListener(ip, _port);
+
+            /* Gør så at serveren kan skrive input*/
+            Thread serverInputThread = new Thread(HandleInput);
+            serverInputThread.Start();
+
+            _running = true;
+
+            listener.Start();
+
+            Console.WriteLine("Skriv \'new\' for at starte en ny auktion.");
+
+            while (_running)
+            {
+                System.Console.WriteLine("Server klar til bruger");
+                /* En socket forbinder*/
+                Socket clientSocket = listener.AcceptSocket();
+
+                /* Lav en ny client handler til forbindelsen */
+                ClientHandler handler = new ClientHandler(clientSocket, _broadcaster);
+                handler.SetAuction(_auction);
+
+                /* Start det i en ny tråd */
+                Thread clientThread = new Thread(handler.RunClient);
+
+                /* Start trådene */
+                clientThread.Start();
             }
         }
     }
