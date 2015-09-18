@@ -103,7 +103,7 @@ namespace Server
                                 Console.WriteLine("Auktion allerede i gang");
                             }
                             break;
-                        case "RESTART":
+                        case "STOP":
                             StopAuction();
                             break;
                     }
