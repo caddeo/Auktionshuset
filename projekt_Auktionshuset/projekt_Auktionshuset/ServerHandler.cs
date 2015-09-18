@@ -44,7 +44,7 @@ namespace projekt_Auktionshuset
             _readerThread = new Thread(ReaderThreadMethod);
             _readerThread.Start();
             _clientRunning = true;
-        }
+        } //
         public void Close()
         {
             if (_serverSocket.Connected.Equals(true) && _serverSocket != null)
