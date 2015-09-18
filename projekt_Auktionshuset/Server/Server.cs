@@ -67,7 +67,7 @@ namespace Server
                 try
                 {
                     switch (input?.Trim().ToUpper())
-                    {//
+                    {
                         case "NEW":
                             if (_auction == null)
                             {
