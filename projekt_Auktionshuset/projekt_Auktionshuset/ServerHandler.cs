@@ -32,8 +32,8 @@ namespace projekt_Auktionshuset
         private Thread _readerThread;
         public ServerHandler(string servername, int port)
         {
-            this._servername = servername;
-            this._port = port;
+            _servername = servername;
+            _port = port;
         }
         public void Open()
         {
@@ -114,16 +114,15 @@ namespace projekt_Auktionshuset
                             RecieveNewHighestEvent(currentPrice);
                         break;
                     case "MESSAGE":
-                        String text = ReadLineFromSocket();
+                        string text = ReadLineFromSocket();
                         if (RecieveMessageEvent != null)
                             RecieveMessageEvent(text);
                         break;
                     case "DISCONNECT":
-                        String disconnect = "Disconnect";
+                        string disconnect = "Disconnect";
                         if (RecieveDisconnectEvent != null)
                             RecieveDisconnectEvent(disconnect);
                         break;
-
                 }
             }
         }

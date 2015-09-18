@@ -47,7 +47,7 @@ namespace Server
 
                 serverInputThread.Start();
 
-                System.Console.WriteLine("Server klar til bruger");
+                Console.WriteLine("Server klar til bruger");
                 /* En socket forbinder*/
                 Socket clientSocket = listener.AcceptSocket();
 

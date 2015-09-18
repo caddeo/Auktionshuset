@@ -45,9 +45,9 @@ namespace projekt_Auktionshuset
         }
         private void OnRecieveNewBidderEvent(string bidder)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidderEvent), bidder);
                 return;
             }
             AuctionMessages.Add("Nyt bud: " + bidder);
@@ -55,9 +55,9 @@ namespace projekt_Auktionshuset
         }
         private void OnRecieveNewBidEvent(string bid)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNewBidEvent), bid);
                 return;
             }
             TextBlockCurrentPrice.Text = "Nuværende bud: " + bid;
@@ -65,18 +65,18 @@ namespace projekt_Auktionshuset
 
         private void OnRecieveDescriptionEvent(string desc)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDescriptionEvent), desc);
                 return;
             }
             TextBlockDescription.Text = "Beskrivelse: \n" + desc;
         }
         private void OnRecieveEstimatedEvent(string price)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveEstimatedEvent), price);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveEstimatedEvent), price);
                 return;
             }
             TextBlockEstimatedPrice.Text = "Estimeret pris: " + price;
@@ -84,9 +84,9 @@ namespace projekt_Auktionshuset
 
         private void OnRecieveMessageEvent(string text)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveMessageEvent), text);
                 return;
             }
             AuctionMessages.Add("Auktion besked: " + text);
@@ -94,9 +94,9 @@ namespace projekt_Auktionshuset
         }
         private void OnRecieveNameEvent(string name)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNameEvent), name);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveNameEvent), name);
                 return;
             }
             LabelAuctionName.Content = ("Auktionnavn: " + name);
@@ -137,9 +137,9 @@ namespace projekt_Auktionshuset
         }
         private void OnRecieveDisconnectEvent(string text)
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (!Dispatcher.CheckAccess())
             {
-                this.Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDisconnectEvent), text);
+                Dispatcher.Invoke(new ServerHandler.RecieveEventType(OnRecieveDisconnectEvent), text);
                 return;
             }
             serverHandler.Close();
