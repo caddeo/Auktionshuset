@@ -28,8 +28,7 @@ namespace projekt_Auktionshuset
         public MainWindow()
         {
             InitializeComponent();
-            serverHandler = new ServerHandler("10.140.65.160", 12000);
-            serverHandler.Open();
+            serverHandler = new ServerHandler("127.0.0.1", 12000);
             serverHandler.RecieveNewBidderEvent += OnRecieveNewBidderEvent;
             serverHandler.RecieveNewHighestEvent += OnRecieveNewBidEvent;
             serverHandler.RecieveDescriptionEvent += OnRecieveDescriptionEvent;
@@ -37,7 +36,6 @@ namespace projekt_Auktionshuset
             serverHandler.RecieveMessageEvent += OnRecieveMessageEvent;
             serverHandler.RecieveDisconnectEvent += OnRecieveDisconnectEvent;
             serverHandler.RecieveNameEvent += OnRecieveNameEvent;
-            serverHandler.WriteToSocket("CONNECTED", "");
             TextboxUserInput.Focus();
         }
         private void OnRecieveNewBidderEvent(string bidder)
@@ -138,6 +136,13 @@ namespace projekt_Auktionshuset
                 return;
             }
             serverHandler.Close();
+        }
+
+        private void ButtonLogon_Click(object sender, RoutedEventArgs e)
+        {
+            serverHandler.Open();
+            serverHandler.WriteToSocket("CONNECTED", "");
+            ButtonLogon.Visibility = Visibility.Hidden;
         }
     }
 }
